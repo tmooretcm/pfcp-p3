@@ -99,8 +99,8 @@ int main(int argc, char *argv[])
       // syrk_blk_var1(Aobj, Cobj, 1);
       // syrk_blk_var2(Aobj, Cobj, 1);
 
-      // syrk_unb_var1(Aobj, Cobj);
-      syrk_unb_var2(Aobj, Cobj);
+      syrk_unb_var1(Aobj, Cobj);
+      // syrk_unb_var2(Aobj, Cobj);
       
       // printf("makes it after\n");
 
@@ -116,6 +116,91 @@ int main(int argc, char *argv[])
     diff = FLA_Max_elemwise_diff( Cobj, Cref );
   
     printf( "data_unb_var1( %d, 1:3 ) = [ %d %le %le];\n", i, n,
+	    dtime_best, diff  );
+
+    fflush( stdout );
+
+
+    /* Time your blocked Variant 1 */
+
+    for ( irep=0; irep<nrepeats; irep++ ){
+      /* Copy vector yold to y */
+      FLA_Copy( Cold, Cobj );
+    
+      /* start clock */
+      dtime = FLA_Clock();
+
+      syrk_blk_var1(Aobj, Cobj, 1);
+
+      /* stop clock */
+      dtime = FLA_Clock() - dtime;
+    
+      if ( irep == 0 ) 
+	dtime_best = dtime;
+      else
+	dtime_best = ( dtime < dtime_best ? dtime : dtime_best );
+    }
+
+    diff = FLA_Max_elemwise_diff( Cobj, Cref );
+  
+    printf( "data_blk_var1( %d, 1:3 ) = [ %d %le %le];\n", i, n,
+	    dtime_best, diff  );
+
+    fflush( stdout );
+
+
+
+        /* Time your unblocked Variant 2 */
+
+    for ( irep=0; irep<nrepeats; irep++ ){
+      /* Copy vector yold to y */
+      FLA_Copy( Cold, Cobj );
+    
+      /* start clock */
+      dtime = FLA_Clock();
+
+      syrk_unb_var2(Aobj, Cobj);
+      
+
+      /* stop clock */
+      dtime = FLA_Clock() - dtime;
+    
+      if ( irep == 0 ) 
+	dtime_best = dtime;
+      else
+	dtime_best = ( dtime < dtime_best ? dtime : dtime_best );
+    }
+
+    diff = FLA_Max_elemwise_diff( Cobj, Cref );
+  
+    printf( "data_unb_var2( %d, 1:3 ) = [ %d %le %le];\n", i, n,
+	    dtime_best, diff  );
+
+    fflush( stdout );
+
+
+        /* Time your blocked Variant 2 */
+
+    for ( irep=0; irep<nrepeats; irep++ ){
+      /* Copy vector yold to y */
+      FLA_Copy( Cold, Cobj );
+    
+      /* start clock */
+      dtime = FLA_Clock();
+      syrk_blk_var2(Aobj, Cobj, 1);
+
+      /* stop clock */
+      dtime = FLA_Clock() - dtime;
+    
+      if ( irep == 0 ) 
+	dtime_best = dtime;
+      else
+	dtime_best = ( dtime < dtime_best ? dtime : dtime_best );
+    }
+
+    diff = FLA_Max_elemwise_diff( Cobj, Cref );
+  
+    printf( "data_blk_var2( %d, 1:3 ) = [ %d %le %le];\n", i, n,
 	    dtime_best, diff  );
 
     fflush( stdout );
