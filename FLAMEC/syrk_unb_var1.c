@@ -10,36 +10,34 @@
 
 #include "FLAME.h"
 
-int syrk_blk_var1( FLA_Obj A, FLA_Obj C, int nb_alg )
+int syrk_unb_var1( FLA_Obj A, FLA_Obj C )
 {
   FLA_Obj AT,              A0,
-          AB,              A1,
+          AB,              a1t,
                            A2;
-
-  int b;
 
   FLA_Part_2x1( A,    &AT, 
                       &AB,            0, FLA_TOP );
 
   while ( FLA_Obj_length( AT ) < FLA_Obj_length( A ) ){
 
-    b = min( FLA_Obj_length( AB ), nb_alg );
-
     FLA_Repart_2x1_to_3x1( AT,                &A0, 
-                        /* ** */            /* ** */
-                                              &A1, 
-                           AB,                &A2,        b, FLA_BOTTOM );
+                        /* ** */            /* *** */
+                                              &a1t, 
+                           AB,                &A2,        1, FLA_BOTTOM );
 
     /*------------------------------------------------------------*/
 
-        FLA_Syrk( FLA_LOWER_TRIANGULAR, FLA_TRANSPOSE, 
-              FLA_ONE, A1, FLA_ONE, C );
+    /* A =  x * x' + A */ 
+
+    // TODO fix this because we need x' * x
+    FLA_Syr( FLA_LOWER_TRIANGULAR, FLA_ONE, a1t, C ); 
 
     /*------------------------------------------------------------*/
 
     FLA_Cont_with_3x1_to_2x1( &AT,                A0, 
-                                                  A1, 
-                            /* ** */           /* ** */
+                                                  a1t, 
+                            /* ** */           /* *** */
                               &AB,                A2,     FLA_TOP );
 
   }

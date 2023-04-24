@@ -23,19 +23,21 @@ LDFLAGS    := -m64 -lm -fopenmp
 # indicate where the FLAME include files reside
 
 # add files in which your implementations are coded
-TEST_OBJS  := driver.o syrk_unb_var1.o 
-# syrk_blk_var2.o syrk_unb_var1.o syrk_unb_var2.o
+TEST_OBJS  := driver.o syrk_unb_var1.o syrk_unb_var2.o syrk_blk_var1.o syrk_blk_var2.o 
+# 
+#syrk_blk_var2.o syrk_unb_var1.o syrk_unb_var2.o
 
 # $%.o: %.c
 #	$(CC) $(CFLAGS) -c $< -o $@
 # $%.o: %.f
 #	$(FC) $(FFLAGS) -c $< -o $@
-
+#> output.m
 driver.x: $(TEST_OBJS) 
 	$(LINKER) $(TEST_OBJS) $(FLAME_LIB) $(BLAS_LIB) $(LDFLAGS) -o driver.x
 
 test:   driver.x
-	echo "$(NREPEATS) $(NFIRST) $(NLAST) $(NINC)" | ./driver.x > output.m
+	echo "$(NREPEATS) $(NFIRST) $(NLAST) $(NINC)" | ./driver.x 
+
 
 clean:
 	rm -f *.o *~ core *.x output.m

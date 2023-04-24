@@ -9,12 +9,13 @@
 #define TRUE 1
 #define FALSE 0
 
-// void trmm_llnn_unb_var1( FLA_Obj, FLA_Obj );
 
-// void syrk_blk_var1(FLA_Obj, FLA_Obj );
-// void syrk_blk_var2(FLA_Obj, FLA_Obj );
 void syrk_unb_var1(FLA_Obj, FLA_Obj );
-// void syrk_unb_var2(FLA_Obj, FLA_Obj );
+void syrk_unb_var2(FLA_Obj, FLA_Obj );
+
+void syrk_blk_var1(FLA_Obj, FLA_Obj, int );
+void syrk_blk_var2(FLA_Obj, FLA_Obj, int );
+
 
 
 int main(int argc, char *argv[])
@@ -54,11 +55,12 @@ int main(int argc, char *argv[])
     FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Cold );
     FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Cref );
 
-
     /* Generate random matrix A, and vectors x, and y */
     FLA_Random_matrix( Aobj );
-    // FLA_Random_matrix( Cold );
     FLA_Random_symm_matrix( FLA_LOWER_TRIANGULAR, Cold );
+
+    // FLA_Random_matrix( Cold );
+
 
 
     for ( irep=0; irep<nrepeats; irep++ ) {
@@ -67,10 +69,11 @@ int main(int argc, char *argv[])
     
       /* start clock */
       dtime = FLA_Clock();
+    
 
-      /* C = tril( A' * A + C  ) + triu( C, 1 ) */
       FLA_Syrk( FLA_LOWER_TRIANGULAR, FLA_TRANSPOSE, FLA_ONE, Aobj, FLA_ONE, Cref );
-
+      // printf("makes it to ref command\n");
+      
       /* stop clock */
       dtime = FLA_Clock() - dtime;
     
@@ -80,32 +83,26 @@ int main(int argc, char *argv[])
 	dtime_best = ( dtime < dtime_best ? dtime : dtime_best );
     }
 
-
-    // printf('before unblocked var 1');
-
-    
     printf( "data_ref( %d, 1:2 ) = [ %d %le ];\n", i, n, dtime_best );
-    
     fflush( stdout );
-
-    printf("WTF\n");
 
     /* Time your unblocked Variant 1 */
 
     for ( irep=0; irep<nrepeats; irep++ ){
       /* Copy vector yold to y */
-      printf('before copy\n');
-
       FLA_Copy( Cold, Cobj );
-      printf('post copy');
-
+    
       /* start clock */
       dtime = FLA_Clock();
- 
-      printf('seg fault here');
       /* Comment out the below call and call your routine instead */
-      syrk_unb_var1(Aobj, Cobj);
-      printf('call made');
+      // printf("makes it before\n");
+      // syrk_blk_var1(Aobj, Cobj, 1);
+      // syrk_blk_var2(Aobj, Cobj, 1);
+
+      // syrk_unb_var1(Aobj, Cobj);
+      syrk_unb_var2(Aobj, Cobj);
+      
+      // printf("makes it after\n");
 
       /* stop clock */
       dtime = FLA_Clock() - dtime;
@@ -118,7 +115,7 @@ int main(int argc, char *argv[])
 
     diff = FLA_Max_elemwise_diff( Cobj, Cref );
   
-    printf( "data_unb_var2( %d, 1:3 ) = [ %d %le %le];\n", i, n,
+    printf( "data_unb_var1( %d, 1:3 ) = [ %d %le %le];\n", i, n,
 	    dtime_best, diff  );
 
     fflush( stdout );
