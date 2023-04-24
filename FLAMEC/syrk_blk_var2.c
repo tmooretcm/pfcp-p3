@@ -45,7 +45,7 @@ int syrk_blk_var2( FLA_Obj A, FLA_Obj C, int nb_alg )
     /* C11 = A1T * A1 + C11*/
     FLA_Gemm( FLA_TRANSPOSE, FLA_NO_TRANSPOSE, FLA_ONE, A1, A1, FLA_ONE, C11 );
     /* C01 = C10T */
-    FLA_Copyt( FLA_TRANSPOSE, C10, C01 );
+    // FLA_Copyt( FLA_TRANSPOSE, C10, C01 );
 
 
     /*------------------------------------------------------------*/

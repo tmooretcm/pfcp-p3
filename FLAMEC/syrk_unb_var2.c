@@ -44,7 +44,7 @@ int syrk_unb_var2( FLA_Obj A, FLA_Obj C )
     FLA_Dots( FLA_ONE, a1, a1, FLA_ONE, gamma11 );
 
     /* c01 = c10t' */
-    FLA_Copyt(FLA_TRANSPOSE, c10t, c01);
+    // FLA_Copyt(FLA_TRANSPOSE, c10t, c01);
     /*------------------------------------------------------------*/
 
     FLA_Cont_with_1x3_to_1x2( &AL,  /**/ &AR,        A0, a1, /**/ A2,
